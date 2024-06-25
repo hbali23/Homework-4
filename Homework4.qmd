@@ -18,7 +18,7 @@ editor: visual
 
 
 5. Why can you name a variable sd in a function and not cause any issues with the sd function?
- 
+  
 
 
 
