@@ -5,11 +5,10 @@ editor: visual
 ---
 
 ## Task 1: Conceptual Questions
-1. What is the purpose of the lapply() function? What is the equivalent purrr function?
-The lapply() function in R is used to apply a function to each element of a list or vector and return the results as a list. The equivalent function in the purrr package is map(). purrr is part of the tidyverse and provides more consistent and versatile tools for functional programming in R.
 
+1.  What is the purpose of the lapply() function? What is the equivalent purrr function? The lapply() function in R is used to apply a function to each element of a list or vector and return the results as a list. The equivalent function in the purrr package is map(). purrr is part of the tidyverse and provides more consistent and versatile tools for functional programming in R.
 
-2. Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())
+2.  Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())
 
 ```{r}
 my_list <- list(
@@ -20,21 +19,16 @@ result <- lapply(my_list, cor, method = "kendall")
 print(result)
 ```
 
+3.  What are two advantages of using purrr functions instead of the BaseR apply family? One advantage of using purrr functions is that they follow a consistent naming scheme (e.g., map\_\*) which makes it clear what each function does. Another advantage is that purrr includes functions like safely(), possibly(), and quietly() that help handle errors and side effects more gracefully during function application.
 
-3. What are two advantages of using purrr functions instead of the BaseR apply family?
-One advantage of using purrr functions is that they follow a consistent naming scheme (e.g., map_*) which makes it clear what each function does. Another advantage is that purrr includes functions like safely(), possibly(), and quietly() that help handle errors and side effects more gracefully during function application.
+4.  What is a side-effect function? A side-effect function is a programming function that performs an action invisibly by not returning the original data value. Side-effect functions are useful for tasks that involve interacting with the outside world or modifying program state. In the context of purrr, functions like walk() are specifically designed to handle operations where side effects are the primary concern.
 
+5.  Why can you name a variable sd in a function and not cause any issues with the sd function? You can name a variable sd inside a function without causing any issues with the built-in sd function because of R's scoping rules. Local variables within a function do not affect global variables or functions, allowing you to safely use names like sd for local variables.
 
-4. What is a side-effect function?
-A side-effect function is a programming function that performs an action invisibly by not returning the original data value. Side-effect functions are useful for tasks that involve interacting with the outside world or modifying program state. In the context of purrr, functions like walk() are specifically designed to handle operations where side effects are the primary concern.
-
-
-5. Why can you name a variable sd in a function and not cause any issues with the sd function?
-You can name a variable sd inside a function without causing any issues with the built-in sd function because of R's scoping rules. Local variables within a function do not affect global variables or functions, allowing you to safely use names like sd for local variables.
-
- 
 ## Task 2 - Writing R Functions
-1. Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.
+
+1.  Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.
+
 ```{r}
 getRMSE <- function(resp, pred, ...) {
   #Calculate rmse
@@ -43,7 +37,8 @@ getRMSE <- function(resp, pred, ...) {
 }
 ```
 
-2. Run the following code to create some response values and predictions.
+2.  Run the following code to create some response values and predictions.
+
 ```{r}
 set.seed(10)
 n <- 100
@@ -51,23 +46,31 @@ x <- runif(n)
 resp <- 3 + 10*x + rnorm(n)
 pred <- predict(lm(resp ~ x), data.frame(x))
 ```
+
 Test your RMSE function using this data.
+
 ```{r}
 getRMSE(resp, pred)
 ```
-Repeat after replacing two of the response values with missing values (NA_real_).
+
+Repeat after replacing two of the response values with missing values (NA_real\_).
+
 ```{r}
-resp[45:46] = NA
+resp_na <- resp 
+resp_na[c(35, 65)] <- NA_real_
+
 ```
+
 Test your RMSE function with and without specifying the behavior to deal with missing values.
+
 ```{r}
-getRMSE(resp, pred, na.rm = TRUE)
+getRMSE(resp_na, pred, na.rm = TRUE)
 # test the function without specifying na.rm = TRUE
-getRMSE(resp, pred)
+getRMSE(resp_na, pred)
 ```
 
+3.  Write a function called getMAE() that follows the specifications of the getRMSE() function.
 
-3. Write a function called getMAE() that follows the specifications of the getRMSE() function.
 ```{r}
 getMAE <- function(resp, pred, ...) {
   # calculate the residuals
@@ -78,7 +81,8 @@ getMAE <- function(resp, pred, ...) {
 }
 ```
 
-4. Run the following code to create some response values and predictions.
+4.  Run the following code to create some response values and predictions.
+
 ```{r}
 set.seed(10)
 n <- 100
@@ -86,23 +90,29 @@ x <- runif(n)
 resp <- 3 + 10*x + rnorm(n)
 pred <- predict(lm(resp ~ x), data.frame(x))
 ```
+
 Test your MAE function using this data.
+
 ```{r}
-getMAE(resp, pred)
+getMAE(resp_na, pred)
 ```
-Repeat after replacing two of the response values with missing values (NA_real_).
+
+Repeat after replacing two of the response values with missing values (NA_real\_).
+
 ```{r}
 # test the function with specifying na.rm = TRUE
-getMAE(resp, pred, na.rm = TRUE)
+getMAE(resp_na, pred, na.rm = TRUE)
 ```
+
 Test your MAE function with and without specifying the behavior to deal with missing values
+
 ```{r}
 # test the function without specifying na.rm = TRUE
 getMAE(resp, pred)
 ```
 
+5.  Let’s create a wrapper function that can be used to get either or both metrics returned with a single function call.
 
-5. Let’s create a wrapper function that can be used to get either or both metrics returned with a single function call. 
 ```{r}
 getMetrics <- function(resp, pred, metrics = c("RMSE", "MAE"), ...) {
   # Check if inputs are numeric and vectors
@@ -129,8 +139,8 @@ getMetrics <- function(resp, pred, metrics = c("RMSE", "MAE"), ...) {
 }
 ```
 
+6.  Run the following code to create some response values and predictions.
 
-6. Run the following code to create some response values and predictions.
 ```{r}
 set.seed(10)
 n <- 100
@@ -138,21 +148,81 @@ x <- runif(n)
 resp <- 3 + 10*x + rnorm(n)
 pred <- predict(lm(resp ~ x), data.frame(x))
 ```
-
-
-## Task 3 -  Querying an API and a Tidy-Style Function
-
-1.
+Test your new function using this data. Call it once asking for each metric individually and once specifying both metrics
 ```{r}
+getMetrics(resp, pred, metrics = c("RMSE"))
+getMetrics(resp, pred, metrics = c("MAE"))
+getMetrics(resp, pred, metrics = c("RMSE", "MAE"))
+```
+Repeat with replacing two of the response values with missing values (NA_real_)
+```{r}
+getMetrics(resp_na, pred, na.rm = TRUE)
+getMetrics(resp_na, pred)
+```
+Finally, test your function by passing it incorrect data (i.e. a data frame or something else instead of vectors)
+```{r}
+incorrect_data <- as.data.frame(resp)
+getMetrics(incorrect_data, pred)
 ```
 
 
-2.
+
+## Task 3 - Querying an API and a Tidy-Style Function
+
+1. Use GET() from the httr package to return information about a topic that you are interested in that has been in the news lately (store the result as an R object). Note: We can only look 30 days into the past with a free account. 
 ```{r}
+library(httr)
+library(jsonlite)
+# get information about businesses
+business_info <- httr::GET("https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=d0c08c5bbcd3476aa22de1b997561871")
+str(business_info, max.level = 1)
 ```
 
-
-3.
+2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!  
 ```{r}
+library(tidyverse)
+parsed_data <- fromJSON(rawToChar(business_info$content))
+str(parsed_data)
+article_info <- as_tibble(parsed_data$articles)
 
+str(article_info$source) 
+article_info <- article_info |>
+  mutate(id=article_info$source$id,
+         name=article_info$source$name) |>
+  select(id, name, everything(), -source)
+article_info
+```
+
+3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.
+```{r}
+query_news_api <- function(query, from_date, api_key) {
+  base_url <- "https://newsapi.org/v2/everything"
+  params <- list(
+    q = query,
+    from = from_date,
+    apiKey = api_key)
+  
+  response <- GET(url = base_url, query = params)
+  
+  if (http_status(response)$category != "Success") {
+    stop("Failed to fetch data from the API.")
+  }
+  parsed_data <- fromJSON(rawToChar(response$content))
+  article_info <- as_tibble(parsed_data$articles)
+  
+  article_info <- article_info |>
+    mutate(id=article_info$source$id,
+           name=article_info$source$name) |>
+    select(id, name, everything(), -source)
+
+  return(article_info)
+}
+
+api_key <- "d0c08c5bbcd3476aa22de1b997561871"
+
+result_business <- query_news_api(query = "Business", from_date = Sys.Date() - 30, api_key = api_key)
+print(result_business)
+
+result_tesla <- query_news_api(query = "Tesla", from_date = 2024-05-30, api_key = api_key)
+print(result_tesla)
 ```
