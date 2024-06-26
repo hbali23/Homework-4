@@ -6,21 +6,33 @@ editor: visual
 
 ## Task 1
 1. What is the purpose of the lapply() function? What is the equivalent purrr function?
-The lapply() function in R is used to apply a function to each element of a list or vector and return the results as a list. 
+The lapply() function in R is used to apply a function to each element of a list or vector and return the results as a list. The equivalent function in the purrr package is map(). purrr is part of the tidyverse and provides more consistent and versatile tools for functional programming in R.
+
 
 2. Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())
 
+```{r}
+my_list <- list(
+  df1 = data.frame(matrix(rnorm(100), nrow = 10)), 
+  df2 = data.frame(matrix(rnorm(100), nrow = 10)), 
+  df3 = data.frame(matrix(rnorm(100), nrow = 10)))
+result <- lapply(my_list, cor, method = "kendall")
+print(result)
+```
+
 
 3. What are two advantages of using purrr functions instead of the BaseR apply family?
+One advantage of using purrr functions is that they follow a consistent naming scheme (e.g., map_*) which makes it clear what each function does. Another advantage is that purrr includes functions like safely(), possibly(), and quietly() that help handle errors and side effects more gracefully during function application.
 
 
 4. What is a side-effect function?
-  
+A side-effect function is a programming function that performs an action invisibly by not returning the original data value. Side-effect functions are useful for tasks that involve interacting with the outside world or modifying program state. In the context of purrr, functions like walk() are specifically designed to handle operations where side effects are the primary concern.
+
 
 5. Why can you name a variable sd in a function and not cause any issues with the sd function?
-  
+You can name a variable sd inside a function without causing any issues with the built-in sd function because of R's scoping rules. Local variables within a function do not affect global variables or functions, allowing you to safely use names like sd for local variables.
 
-
+ 
 ## Task 2
 
 
