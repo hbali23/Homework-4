@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-## Task 1
+## Task 1: Conceptual Questions
 1. What is the purpose of the lapply() function? What is the equivalent purrr function?
 The lapply() function in R is used to apply a function to each element of a list or vector and return the results as a list. The equivalent function in the purrr package is map(). purrr is part of the tidyverse and provides more consistent and versatile tools for functional programming in R.
 
@@ -33,7 +33,126 @@ A side-effect function is a programming function that performs an action invisib
 You can name a variable sd inside a function without causing any issues with the built-in sd function because of R's scoping rules. Local variables within a function do not affect global variables or functions, allowing you to safely use names like sd for local variables.
 
  
-## Task 2
+## Task 2 - Writing R Functions
+1. Write a basic function (call it getRMSE()) that takes in a vector of responses and a vector of predictions and outputs the RMSE.
+```{r}
+getRMSE <- function(resp, pred, ...) {
+  #Calculate rmse
+  rmse <- sqrt(mean((resp - pred)^2, ...))
+  return(rmse)
+}
+```
+
+2. Run the following code to create some response values and predictions.
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+```
+Test your RMSE function using this data.
+```{r}
+getRMSE(resp, pred)
+```
+Repeat after replacing two of the response values with missing values (NA_real_).
+```{r}
+resp[45:46] = NA
+```
+Test your RMSE function with and without specifying the behavior to deal with missing values.
+```{r}
+getRMSE(resp, pred, na.rm = TRUE)
+# test the function without specifying na.rm = TRUE
+getRMSE(resp, pred)
+```
 
 
-## Task 3
+3. Write a function called getMAE() that follows the specifications of the getRMSE() function.
+```{r}
+getMAE <- function(resp, pred, ...) {
+  # calculate the residuals
+  residuals <- resp - pred
+  # Calculate the Mean Absolute Error (MAE)
+  mae <- mean(abs(residuals), ...)
+  return(mae)
+}
+```
+
+4. Run the following code to create some response values and predictions.
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+```
+Test your MAE function using this data.
+```{r}
+getMAE(resp, pred)
+```
+Repeat after replacing two of the response values with missing values (NA_real_).
+```{r}
+# test the function with specifying na.rm = TRUE
+getMAE(resp, pred, na.rm = TRUE)
+```
+Test your MAE function with and without specifying the behavior to deal with missing values
+```{r}
+# test the function without specifying na.rm = TRUE
+getMAE(resp, pred)
+```
+
+
+5. Let’s create a wrapper function that can be used to get either or both metrics returned with a single function call. 
+```{r}
+getMetrics <- function(resp, pred, metrics = c("RMSE", "MAE"), ...) {
+  # Check if inputs are numeric and vectors
+  if (!is.vector(resp) || !is.numeric(resp)) {
+    stop("responses must be a numeric vector")
+  }
+  if (!is.vector(pred) || !is.numeric(pred)) {
+    stop("predictions must be a numeric vector")
+  }
+  results <- list()
+  
+  # Check if RMSE is requested
+  if ("RMSE" %in% metrics) {
+    results$RMSE <- getRMSE(resp, pred, ...)
+  }
+  
+  # Check if MAE is requested
+  if ("MAE" %in% metrics) {
+    results$MAE <- getMAE(resp, pred, ...)
+  }
+  
+  # Return the results list
+  return(results)
+}
+```
+
+
+6. Run the following code to create some response values and predictions.
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+```
+
+
+## Task 3 -  Querying an API and a Tidy-Style Function
+
+1.
+```{r}
+```
+
+
+2.
+```{r}
+```
+
+
+3.
+```{r}
+
+```
