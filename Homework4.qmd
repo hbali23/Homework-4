@@ -181,21 +181,19 @@ str(business_info, max.level = 1)
 2. Parse what is returned and find your way to the data frame that has the actual article information in it (check content). Note the first column should be a list column!  
 ```{r}
 library(tidyverse)
-parsed_data <- fromJSON(rawToChar(business_info$content))
-str(parsed_data)
-article_info <- as_tibble(parsed_data$articles)
+parsed <- fromJSON(rawToChar(business_info$content))
+str(parsed)
+article <- as_tibble(parsed_data$articles)
 
-str(article_info$source) 
-article_info <- article_info |>
-  mutate(id=article_info$source$id,
-         name=article_info$source$name) |>
-  select(id, name, everything(), -source)
-article_info
+str(article$source) 
+article <- article |> mutate(id=article$source$id,
+name=article$source$name) |> select(id, name, everything(), -source)
+article
 ```
 
 3. Now write a quick function that allows the user to easily query this API. The inputs to the function should be the title/subject to search for (string), a time period to search from (string - you’ll search from that time until the present), and an API key.
 ```{r}
-query_news_api <- function(query, from_date, api_key) {
+query_api <- function(query, from_date, api_key) {
   base_url <- "https://newsapi.org/v2/everything"
   params <- list(
     q = query,
@@ -207,15 +205,15 @@ query_news_api <- function(query, from_date, api_key) {
   if (http_status(response)$category != "Success") {
     stop("Failed to fetch data from the API.")
   }
-  parsed_data <- fromJSON(rawToChar(response$content))
-  article_info <- as_tibble(parsed_data$articles)
+  parsed <- fromJSON(rawToChar(response$content))
+  article <- as_tibble(parsed_data$articles)
   
-  article_info <- article_info |>
-    mutate(id=article_info$source$id,
-           name=article_info$source$name) |>
+  article <- article |>
+    mutate(id=article$source$id,
+           name=article$source$name) |>
     select(id, name, everything(), -source)
 
-  return(article_info)
+  return(article)
 }
 
 api_key <- "d0c08c5bbcd3476aa22de1b997561871"
